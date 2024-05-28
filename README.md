@@ -1,21 +1,18 @@
-# Pascal's Triangle
+# alx-interview
 
-Pascal's Triangle is a triangular array of numbers where each number is the sum of the two numbers directly above it. It is named after the French mathematician Blaise Pascal.
+Welcome to the alx-interview repository! This repository is dedicated to preparing for interviews at ALX Software Engineering School.
 
-## Algorithm
+## Table of Contents
+- [About](#about)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
 
-To generate Pascal's Triangle, we can use the following algorithm:
+## About
+In this repository, you will find resources, practice questions, and tips to help you succeed in your ALX interview. Whether you are preparing for the technical interview or the behavioral interview, we've got you covered.
 
-1. Start with the first row containing only the number 1.
-2. For each subsequent row, add a 1 at the beginning and end of the row.
-3. For each number in the row (except the first and last), calculate the sum of the two numbers directly above it in the previous row.
-4. Repeat steps 2 and 3 until the desired number of rows is reached.
-
-## Example
-
-Here is an example of Pascal's Triangle with 5 rows:
-
-look in the project
+## Getting Started
+To get started, clone this repository to your local machine:
 
 ## GitHubHome
 
