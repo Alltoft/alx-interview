@@ -1,5 +1,17 @@
 #!/usr/bin/python3
+"""
+Generate Pascal's triangle up to the given number of rows.
+
+Args:
+    n (int): The number of rows to generate.
+
+Returns:
+    list: A list of lists representing Pascal's triangle.
+"""
+
+
 def pascal_triangle(n):
+    """this function returns a list of lists representing Pascal's triangle"""
     if n <= 0:
         return []
     triangle = [[1]]
