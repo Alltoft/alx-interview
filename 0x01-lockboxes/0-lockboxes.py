@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 """Interview Prep: Lockboxes"""
 
+OPEN = 'opened!'
 
-Open = 'opened!'
-
-
-def OpenBox(boxes, n):
+def open_box(boxes, n):
     """
     Recursively opens the boxes in a lockbox system.
 
@@ -17,16 +15,13 @@ def OpenBox(boxes, n):
         None
     """
     box = boxes[n]
-    if Open in box:
+    if OPEN in box:
         return
     else:
-        box.append(Open)
+        box.append(OPEN)
         for key in box:
-            if key == Open:
-                return
-            else:
-                OpenBox(boxes, key)
-
+            if isinstance(key, int) and key < len(boxes):
+                open_box(boxes, key)
 
 def canUnlockAll(boxes):
     """
@@ -39,9 +34,17 @@ def canUnlockAll(boxes):
     Returns:
         bool: True if all boxes can be unlocked, False otherwise.
     """
-    OpenBox(boxes, n=0)
-    boolen = all(Open in box for box in boxes)
+    if not boxes:
+        return True
+
+    open_box(boxes, 0)
+    
+    # Check if all boxes are opened
+    all_unlocked = all(OPEN in box for box in boxes)
+    
+    # Clean up: remove the OPEN marker
     for box in boxes:
-        if Open in box:
-            box.remove(Open)
-    return boolen
+        if OPEN in box:
+            box.remove(OPEN)
+    
+    return all_unlocked
