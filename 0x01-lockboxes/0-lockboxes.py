@@ -3,6 +3,7 @@
 
 OPEN = 'opened!'
 
+
 def open_box(boxes, n):
     """
     Recursively opens the boxes in a lockbox system.
@@ -23,6 +24,7 @@ def open_box(boxes, n):
             if isinstance(key, int) and key < len(boxes):
                 open_box(boxes, key)
 
+
 def canUnlockAll(boxes):
     """
     Determines if all the boxes in the given list can be unlocked.
@@ -38,13 +40,11 @@ def canUnlockAll(boxes):
         return True
 
     open_box(boxes, 0)
-    
-    # Check if all boxes are opened
+
     all_unlocked = all(OPEN in box for box in boxes)
-    
-    # Clean up: remove the OPEN marker
+
     for box in boxes:
         if OPEN in box:
             box.remove(OPEN)
-    
+
     return all_unlocked
