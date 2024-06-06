@@ -40,9 +40,8 @@ def canUnlockAll(boxes):
         bool: True if all boxes can be unlocked, False otherwise.
     """
     OpenBox(boxes, n=0)
+    boolen = all(Open in box for box in boxes)
     for box in boxes:
         if Open in box:
-            continue
-        else:
-            return False
-    return True
+            box.remove(Open)
+    return boolen
