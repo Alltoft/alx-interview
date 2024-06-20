@@ -1,50 +1,42 @@
 #!/usr/bin/python3
-"""
-log parsing
-"""
-
+""" This script reads from standard input and computes metrics """
 import sys
-import re
+import signal
 
 
-def output(log: dict) -> None:
-    """
-    helper function to display stats
-    """
-    print("File size: {}".format(log["file_size"]))
-    for code in sorted(log["code_frequency"]):
-        if log["code_frequency"][code]:
-            print("{}: {}".format(code, log["code_frequency"][code]))
+# Initialize variables
+total_size = 0
+status_codes = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
+line_count = 0
 
+# Function to print statistics
+def print_stats():
+    print("File size: {}".format(total_size))
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print("{}: {}".format(code, status_codes[code]))
 
-if __name__ == "__main__":
-    regex = re.compile(
-    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] "GET /projects/260 HTTP/1.1" (.{3}) (\d+)')  # nopep8
+# Signal handler for keyboard interruption
+def signal_handler(sig, frame):
+    print_stats()
+    sys.exit(0)
 
-    line_count = 0
-    log = {}
-    log["file_size"] = 0
-    log["code_frequency"] = {
-        str(code): 0 for code in [
-            200, 301, 400, 401, 403, 404, 405, 500]}
+# Attach the signal handler
+signal.signal(signal.SIGINT, signal_handler)
 
-    try:
-        for line in sys.stdin:
-            line = line.strip()
-            match = regex.fullmatch(line)
-            if (match):
-                line_count += 1
-                code = match.group(1)
-                file_size = int(match.group(2))
+try:
+    for line in sys.stdin:
+        line_count += 1
+        parts = line.split()
+        if len(parts) == 7 and parts[5].isdigit():
+            total_size += int(parts[6])
+            status_codes[parts[5]] += 1
 
-                # File size
-                log["file_size"] += file_size
+        if line_count % 10 == 0:
+            print_stats()
 
-                # status code
-                if (code.isdecimal()):
-                    log["code_frequency"][code] += 1
+except KeyboardInterrupt:
+    pass
 
-                if (line_count % 10 == 0):
-                    output(log)
-    finally:
-        output(log)
+finally:
+    print_stats()
