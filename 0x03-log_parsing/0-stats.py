@@ -1,42 +1,50 @@
 #!/usr/bin/python3
-""" This script reads from standard input and computes metrics """
+"""
+log parsing
+"""
+
 import sys
-import signal
+import re
 
 
-# Initialize variables
-total_size = 0
-status_codes = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
-line_count = 0
+def output(log: dict) -> None:
+    """
+    helper function to display stats
+    """
+    print("File size: {}".format(log["file_size"]))
+    for code in sorted(log["code_frequency"]):
+        if log["code_frequency"][code]:
+            print("{}: {}".format(code, log["code_frequency"][code]))
 
-# Function to print statistics
-def print_stats():
-    print("File size: {}".format(total_size))
-    for code in sorted(status_codes.keys()):
-        if status_codes[code] > 0:
-            print("{}: {}".format(code, status_codes[code]))
 
-# Signal handler for keyboard interruption
-def signal_handler(sig, frame):
-    print_stats()
-    sys.exit(0)
+if __name__ == "__main__":
+    regex = re.compile(
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] "GET /projects/260 HTTP/1.1" (.{3}) (\d+)')  # nopep8
 
-# Attach the signal handler
-signal.signal(signal.SIGINT, signal_handler)
+    line_count = 0
+    log = {}
+    log["file_size"] = 0
+    log["code_frequency"] = {
+        str(code): 0 for code in [
+            200, 301, 400, 401, 403, 404, 405, 500]}
 
-try:
-    for line in sys.stdin:
-        line_count += 1
-        parts = line.split()
-        if len(parts) == 7 and parts[5].isdigit():
-            total_size += int(parts[6])
-            status_codes[parts[5]] += 1
+    try:
+        for line in sys.stdin:
+            line = line.strip()
+            match = regex.fullmatch(line)
+            if (match):
+                line_count += 1
+                code = match.group(1)
+                file_size = int(match.group(2))
 
-        if line_count % 10 == 0:
-            print_stats()
+                # File size
+                log["file_size"] += file_size
 
-except KeyboardInterrupt:
-    pass
+                # status code
+                if (code.isdecimal()):
+                    log["code_frequency"][code] += 1
 
-finally:
-    print_stats()
+                if (line_count % 10 == 0):
+                    output(log)
+    finally:
+        output(log)
