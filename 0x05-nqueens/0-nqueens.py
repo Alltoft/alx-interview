@@ -3,8 +3,8 @@
 import sys
 
 
-def print_res(board):
-    """ Print the res"""
+def print_solution(board):
+    """ Print the solution"""
     solution = [[i, board[i]] for i in range(len(board))]
     print(solution)
 
@@ -22,7 +22,7 @@ def is_safe(board, row, col):
 def solve_nqueens(board, row):
     """ Solve the N queens problem"""
     if row == len(board):
-        print_res(board)
+        print_solution(board)
         return
     for col in range(len(board)):
         if is_safe(board, row, col):
